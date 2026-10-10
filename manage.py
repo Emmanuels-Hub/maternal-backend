@@ -12,7 +12,8 @@ Environment variables (see app/config.py for the full list):
   ENABLE_LOCAL_MODEL=false   — keep this FALSE on your dev machine;
                                only set to TRUE on an inference server
                                that already has the model weights.
-  NATLAS_MODEL_PATH=...      — path to the downloaded model directory
+    NATLAS_MODEL_PATH=...      — path to the GGUF file (local or bucket mount)
+    NATLAS_ASR_MODEL_ROOT=...  — directory with local language model snapshots
   PORT=5000                  — port to bind
 """
 

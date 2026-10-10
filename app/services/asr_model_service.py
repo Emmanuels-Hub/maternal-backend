@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import gc
 import logging
+import os
 import threading
 from typing import Any
 
@@ -53,10 +54,12 @@ class ASRModelHandler:
         enabled: bool,
         hf_token: str = "",
         device: str = "auto",
+        model_root: str = "",
     ) -> None:
         self.enabled = enabled
         self.hf_token = hf_token or None
         self.device_setting = device
+        self.model_root = model_root
         self._pipeline: Any = None
         self._language: str | None = None
         self._lock = threading.RLock()
@@ -104,21 +107,36 @@ class ASRModelHandler:
         device = self._resolve_device(torch)
         model_kwargs = {"torch_dtype": torch.float16} if device >= 0 else {}
         model_config = ASR_MODELS[language]
+        model_path = (
+            os.path.join(self.model_root, language) if self.model_root else None
+        )
+
+        if model_path and not os.path.isdir(model_path):
+            raise FileNotFoundError(
+                f"ASR model directory for {language} was not found: {model_path}"
+            )
 
         logger.info(
-            "[N-ATLaS ASR] Loading %s from %s at pinned revision %s",
+            "[N-ATLaS ASR] Loading %s from %s",
             language,
-            model_config["repo_id"],
-            model_config["revision"],
+            model_path or f"{model_config['repo_id']}@{model_config['revision']}",
         )
-        self._pipeline = pipeline(
-            "automatic-speech-recognition",
-            model=model_config["repo_id"],
-            revision=model_config["revision"],
-            token=self.hf_token,
-            device=device,
-            model_kwargs=model_kwargs,
-        )
+        pipeline_options = {
+            "device": device,
+            "model_kwargs": model_kwargs,
+        }
+        if model_path:
+            pipeline_options["model"] = model_path
+        else:
+            pipeline_options.update(
+                {
+                    "model": model_config["repo_id"],
+                    "revision": model_config["revision"],
+                    "token": self.hf_token,
+                }
+            )
+
+        self._pipeline = pipeline("automatic-speech-recognition", **pipeline_options)
         self._language = language
 
     def _resolve_device(self, torch: Any) -> int:
@@ -160,5 +178,6 @@ def get_asr_handler(app: Flask) -> ASRModelHandler:
             enabled=app.config.get("ENABLE_ASR_MODEL", False),
             hf_token=app.config.get("HF_TOKEN", ""),
             device=app.config.get("NATLAS_ASR_DEVICE", "auto"),
+            model_root=app.config.get("NATLAS_ASR_MODEL_ROOT", ""),
         )
     return app.extensions[_EXTENSION_KEY]

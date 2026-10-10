@@ -10,6 +10,7 @@ Environment variables (set in a .env file or your server environment):
     NATLAS_MODEL_ID      — Hugging Face repository containing the GGUF
     NATLAS_MODEL_REVISION — pinned Hugging Face commit
     NATLAS_GPU_LAYERS    — llama.cpp layers to offload; -1 means all layers
+    NATLAS_ASR_MODEL_ROOT — optional directory containing local ASR model snapshots
   FLASK_SECRET_KEY     — secret key for Flask sessions
   PORT                 — port to bind (default 5000)
 """
@@ -47,6 +48,7 @@ class Config:
     NATLAS_MODEL_PATH: str = os.getenv("NATLAS_MODEL_PATH", "")
     NATLAS_CONTEXT_SIZE: int = int(os.getenv("NATLAS_CONTEXT_SIZE", "4096"))
     NATLAS_GPU_LAYERS: int = int(os.getenv("NATLAS_GPU_LAYERS", "0"))
+    NATLAS_ASR_MODEL_ROOT: str = os.getenv("NATLAS_ASR_MODEL_ROOT", "")
     MAX_CONTENT_LENGTH: int = int(os.getenv("MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
 
     PORT: int = int(os.getenv("PORT", "5000"))
