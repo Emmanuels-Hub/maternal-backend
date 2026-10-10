@@ -1,0 +1,16 @@
+flask>=3.0.0
+flask-cors>=4.0.0
+gunicorn>=22.0.0
+
+# ── N-ATLaS GGUF inference ─────────────────────────────────────────────────
+# The default package build targets CPU. For a CUDA inference server, install
+# with: CMAKE_ARGS="-DGGML_CUDA=on" pip install --force-reinstall --no-cache-dir llama-cpp-python
+llama-cpp-python>=0.3.16
+huggingface-hub>=0.26.0
+
+# ── N-ATLaS Whisper ASR inference ──────────────────────────────────────────
+transformers>=4.46.0
+torch>=2.2.0
+accelerate>=0.29.0
+# The Transformers ASR pipeline uses ffmpeg to decode uploaded MP3/M4A files.
+# Install ffmpeg in the inference image; WAV recordings do not need transcoding.
