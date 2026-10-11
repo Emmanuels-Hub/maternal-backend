@@ -7,11 +7,12 @@ Hugging Face.
 
 ## Bucket layout
 
-Upload the GGUF file and complete Hugging Face snapshot directories using this
-layout:
+Upload the GGUF file and complete Hugging Face snapshot directories to the
+bucket root using this layout. The leading `bucket-root/` label is explanatory;
+do not create an extra `models/` directory inside the bucket:
 
 ```text
-models/
+bucket-root/
   llm/N-ATLaS-GGUF-Q4_K_M.gguf
   asr/hausa/...
   asr/igbo/...
