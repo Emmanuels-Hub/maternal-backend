@@ -5,7 +5,7 @@ Run locally:
     python manage.py
 
 Run with Gunicorn (production):
-    gunicorn "manage:app" --bind 0.0.0.0:5000 --workers 1
+    gunicorn "manage:app" --bind 0.0.0.0:5000 --workers 1 --timeout 180
 
 Environment variables (see app/config.py for the full list):
   FLASK_DEBUG=true           — enable debug / hot-reload

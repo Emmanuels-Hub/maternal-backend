@@ -20,4 +20,4 @@ COPY manage.py n_atlas_model.py ./
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "exec gunicorn manage:app --bind 0.0.0.0:${PORT:-8080} --workers 1 --access-logfile -"]
+CMD ["sh", "-c", "exec gunicorn manage:app --bind 0.0.0.0:${PORT:-8080} --workers 1 --timeout 180 --access-logfile -"]
